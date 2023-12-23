@@ -4667,7 +4667,7 @@ Trigger is based on 'CHANGE' so we get a signal on the up and downward edges of 
 * @defgroup dec_vmax Yamaha Vmax
 * @{
 */
-void triggerSetup_Vmax()
+void triggerSetup_Vmax(void)
 {
   triggerToothAngle = 0; // The number of degrees that passes from tooth to tooth, ev. 0. It alternates uneven
   //secondDerivEnabled = false; //editRempage changed code
@@ -4853,14 +4853,14 @@ void triggerPri_Vmax(void)
 }
 
 
-void triggerSec_Vmax()
+void triggerSec_Vmax(void)
 // Needs to be enabled in main()
 {
   return;// No need for now. The only thing it could help to sync more quikly or confirm position.
 } // End Sec Trigger
 
 
-uint16_t getRPM_Vmax()
+uint16_t getRPM_Vmax(void)
 {
   uint16_t tempRPM = 0;
   if (currentStatus.hasSync == true)
@@ -4889,7 +4889,7 @@ uint16_t getRPM_Vmax()
 }
 
 
-int getCrankAngle_Vmax()
+int getCrankAngle_Vmax(void)
 {
   //This is the current angle ATDC the engine is at. This is the last known position based on what tooth was last 'seen'. It is only accurate to the resolution of the trigger wheel (Eg 36-1 is 10 degrees)
   unsigned long tempToothLastToothTime;
@@ -4929,7 +4929,7 @@ int getCrankAngle_Vmax()
   return crankAngle;
 }
 
-void triggerSetEndTeeth_Vmax()
+void triggerSetEndTeeth_Vmax(void)
 {
   lastToothCalcAdvance = currentStatus.advance;
 }
