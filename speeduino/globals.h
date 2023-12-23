@@ -66,6 +66,7 @@
     #define CORE_TEENSY35
     #define BOARD_H "board_teensy35.h"
     #define BOARD_MAX_ADC_PINS  22 //Number of analog pins
+    #define Serial Serial1//editRempage: define serial to Wifi/BT
   #elif defined(__IMXRT1062__)
     #define CORE_TEENSY41
     #define BOARD_H "board_teensy41.h"

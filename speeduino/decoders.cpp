@@ -4667,14 +4667,24 @@ Trigger is based on 'CHANGE' so we get a signal on the up and downward edges of 
 * @defgroup dec_vmax Yamaha Vmax
 * @{
 */
-void triggerSetup_Vmax(void)
+void triggerSetup_Vmax()
 {
   triggerToothAngle = 0; // The number of degrees that passes from tooth to tooth, ev. 0. It alternates uneven
+  //secondDerivEnabled = false; //editRempage changed code
+  //decoderIsSequential = true; //newSequentialCode
+
   BIT_CLEAR(decoderState, BIT_DECODER_2ND_DERIV);
-  BIT_CLEAR(decoderState, BIT_DECODER_IS_SEQUENTIAL);
-  BIT_CLEAR(decoderState, BIT_DECODER_HAS_SECONDARY);
-  MAX_STALL_TIME = ((MICROS_PER_DEG_1_RPM/50U) * 60U); //Minimum 50rpm. (3333uS is the time per degree at 50rpm)
-  if(currentStatus.initialisationComplete == false) { toothLastToothTime = micros(); } //Set a startup value here to avoid filter errors when starting. This MUST have the initi check to prevent the fuel pump just staying on all the time
+  BIT_SET(decoderState, BIT_DECODER_IS_SEQUENTIAL);
+  BIT_SET(decoderState, BIT_DECODER_HAS_SECONDARY);
+
+  
+  //Misused variables for full sync:
+  triggerSecFilterTime = 0; //Used for confidence score of secondary pulse. On startup, this is 0. After 100 correct revolutions we go to full sync. If it drops to 0 (the cam signal seems to be reversed, we flip and go up to 100 again).
+  toothLastMinusOneSecToothTime = 0; //Register the last MAP2 for diff
+  toothLastSecToothTime = 0; //Get current MAP2
+  
+  MAX_STALL_TIME = (3333UL * 60); //Minimum 50rpm. (3333uS is the time per degree at 50rpm)
+  if(initialisationComplete == false) { toothLastToothTime = micros(); } //Set a startup value here to avoid filter errors when starting. This MUST have the initi check to prevent the fuel pump just staying on all the time
   triggerFilterTime = 1500;
   BIT_SET(decoderState, BIT_DECODER_VALID_TRIGGER); // We must start with a valid trigger or we cannot start measuring the lobe width. We only have a false trigger on the lobe up event when it doesn't pass the filter. Then, the lobe width will also not be beasured.
   toothAngles[1] = 0;      //tooth #1, these are the absolute tooth positions
@@ -4685,8 +4695,9 @@ void triggerSetup_Vmax(void)
   toothAngles[6] = 290;    //tooth #6
 }
 
-//curGap = microseconds between primary triggers
-//curGap2 = microseconds between secondary triggers
+//curGap = The difference between the rising lobes.
+//curGap2 = the time in micros when the rising lobe is seen
+//curGap3 = the time in micros when the falling lobe is seen
 //toothCurrentCount = the current number for the end of a lobe
 //secondaryToothCount = the current number of the beginning of a lobe
 //We measure the width of a lobe so on the end of a lobe, but want to trigger on the beginning. Variable toothCurrentCount tracks the downward events, and secondaryToothCount updates on the upward events. Ideally, it should be the other way round but the engine stall routine resets secondaryToothCount, so it would not sync again after an engine stall.
@@ -4711,6 +4722,59 @@ void triggerPri_Vmax(void)
             currentStatus.hasSync = true;
             setFilter((curGap/1.75));//Angle to this tooth is 70, next is in 40, compensating.
             currentStatus.startRevolutions++; //Counter
+
+            //EditRempage: Code to check 'cam' signal. Tooth 6 has proven to be the best to measure pressure differences when using front-left cylinder.
+            if(triggerSecFilterTime < 1000){//When confidence reaches 1000, we are done. This counter is reset when loss of sync occurs.
+              if (currentStatus.TPS < 60){// We only want the signal when below 30% TPS (TPS is in 0.5% increments)
+                if (toothLastSecToothTime == toothLastMinusOneSecToothTime){//Same value, we flip but not change confidence.
+                  revolutionOne = !revolutionOne; //Flip sequential revolution tracker
+                }
+                else if (toothLastSecToothTime < toothLastMinusOneSecToothTime && revolutionOne == false){// Sec is true, last one was false. Add confidence and continue. Current MAP is lower we are likely on the 2nd revolution (361-720)
+                  triggerSecFilterTime++;
+                  revolutionOne = true;
+                }
+                else if (toothLastSecToothTime > toothLastMinusOneSecToothTime && revolutionOne == true){// Sec is false, last one was true. Add confidence and continue.
+                  triggerSecFilterTime++;
+                  revolutionOne = false;
+                }
+                else if (toothLastSecToothTime < toothLastMinusOneSecToothTime && revolutionOne == true){// Sec is true, last one was true. Which is wrong. Reduce confidence.
+                  if (triggerSecFilterTime > 0){// If confidence is above 0, we flip secondary. If it goes below 0, we do not so the primary and secondary revolutions are reversed.
+                     revolutionOne = false;   
+                     triggerSecFilterTime--;               
+                  }
+                  else{
+                    currentStatus.syncLossCounter = 100;// Confidense is 0 or below, set syncLossCouter to 100 so we have logging.
+                  }
+                }
+                else if (toothLastSecToothTime > toothLastMinusOneSecToothTime && revolutionOne == false){// Sec is false, last one was false. Which is wrong. Reduce confidence.
+                  if (triggerSecFilterTime > 0){// If confidence is above 0, we flip secondary. If it goes below 0, we do not so the primary and secondary revolutions are reversed.
+                     revolutionOne = true;    
+                     triggerSecFilterTime--;              
+                  }
+                  else{
+                    currentStatus.syncLossCounter = 100;// Confidense is 0 or below, set syncLossCouter to 100 so we have logging.
+                  }
+                }                
+                if  (triggerSecFilterTime == 20){
+                  currentStatus.syncLossCounter = 110;// Confidense is above 20, so we have full Sync, set syncLossCouter to 110 so we have logging.
+                }
+                if (triggerSecFilterTime == 1000){
+                  currentStatus.syncLossCounter = 120;// Routine is done (untill engine stops or we have sync loss, set syncLossCouter to 120 so we have logging.
+                } 
+              }
+            }
+            else{//Sync done, we just keep flipping.
+              revolutionOne = !revolutionOne; //Flip sequential revolution tracker
+            }
+
+
+            
+          //FAKE CODE for all above, used for testing with ArduStim
+          //revolutionOne = !revolutionOne; //Flip sequential revolution tracker
+          //triggerSecFilterTime++;
+          //END FAKE CODE
+                        
+            toothLastMinusOneSecToothTime = toothLastSecToothTime; //Store the current MAP2 for next round. 
           }
           else if (toothCurrentCount==2)
           {
@@ -4741,6 +4805,7 @@ void triggerPri_Vmax(void)
             secondaryToothCount = 6;
             triggerToothAngle = 70;
             setFilter(curGap);//Angle to this tooth is 70, next is in 70. No need to compensate.
+      toothLastSecToothTime = analogRead(pinMAP2);//Get current MAP2 to use at tooth 1.
           }
           toothLastMinusOneToothTime = toothLastToothTime;
           toothLastToothTime = curTime;
@@ -4759,24 +4824,26 @@ void triggerPri_Vmax(void)
   }
   else if( BIT_CHECK(decoderState, BIT_DECODER_VALID_TRIGGER) ) // Inverted due to vr conditioner. So this is the falling lobe. We only process if there was a valid trigger.
   {
-    unsigned long curGapLocal = curTime - curGap2;
-    if (curGapLocal > (lastGap * 2)){// Small lobe is 5 degrees, big lobe is 45 degrees. So this should be the wide lobe.
+    curGap3 = curTime - curGap2;
+    if (curGap3 > (lastGap * 2)){// Small lobe is 5 degrees, big lobe is 45 degrees. So this should be the wide lobe.
         if (toothCurrentCount == 0 || toothCurrentCount == 6){//Wide should be seen with toothCurrentCount = 0, when there is no sync yet, or toothCurrentCount = 6 when we have done a full revolution. 
           currentStatus.hasSync = true;
         }
         else{//Wide lobe seen where it shouldn't, adding a sync error.
           currentStatus.syncLossCounter++;
+      triggerSecFilterTime = 0; //confidence score for cam to 0, since we don't know where we are. Back to half sync.
         }
         toothCurrentCount = 1;
     }
     else if(toothCurrentCount == 6){//The 6th lobe should be wide, adding a sync error.
         toothCurrentCount = 1;
         currentStatus.syncLossCounter++;
+    triggerSecFilterTime = 0; //confidence score for cam to 0, since we don't know where we are. Back to half sync.
     }
     else{// Small lobe, just add 1 to the toothCurrentCount.
       toothCurrentCount++;
     }
-    lastGap = curGapLocal;
+    lastGap = curGap3;
     return;
   }
   else if( BIT_CHECK(decoderState, BIT_DECODER_VALID_TRIGGER) == false)
@@ -4786,14 +4853,14 @@ void triggerPri_Vmax(void)
 }
 
 
-void triggerSec_Vmax(void)
+void triggerSec_Vmax()
 // Needs to be enabled in main()
 {
   return;// No need for now. The only thing it could help to sync more quikly or confirm position.
 } // End Sec Trigger
 
 
-uint16_t getRPM_Vmax(void)
+uint16_t getRPM_Vmax()
 {
   uint16_t tempRPM = 0;
   if (currentStatus.hasSync == true)
@@ -4807,30 +4874,32 @@ uint16_t getRPM_Vmax(void)
       {
         noInterrupts();
         tempToothAngle = triggerToothAngle;
-        SetRevolutionTime(toothOneTime - toothOneMinusOneTime); //The time in uS that one revolution would take at current speed (The time tooth 1 was last seen, minus the time it was seen prior to that)
+        revolutionTime = (toothOneTime - toothOneMinusOneTime); //The time in uS that one revolution would take at current speed (The time tooth 1 was last seen, minus the time it was seen prior to that)
         toothTime = (toothLastToothTime - toothLastMinusOneToothTime); 
         interrupts();
         toothTime = toothTime * 36;
-        tempRPM = ((unsigned long)tempToothAngle * (MICROS_PER_MIN/10U)) / toothTime;
+        tempRPM = ((unsigned long)tempToothAngle * 6000000UL) / toothTime;
       }
     }
     else {
-      tempRPM = stdGetRPM(CRANK_SPEED);
+      tempRPM = stdGetRPM(360);
     }
   }
   return tempRPM;
 }
 
 
-int getCrankAngle_Vmax(void)
+int getCrankAngle_Vmax()
 {
   //This is the current angle ATDC the engine is at. This is the last known position based on what tooth was last 'seen'. It is only accurate to the resolution of the trigger wheel (Eg 36-1 is 10 degrees)
   unsigned long tempToothLastToothTime;
   int tempsecondaryToothCount;
+  bool tempRevolutionOne; //newSequentialCode
   //Grab some variables that are used in the trigger code and assign them to temp variables.
   noInterrupts();
   tempsecondaryToothCount = secondaryToothCount;
   tempToothLastToothTime = toothLastToothTime;
+  tempRevolutionOne = revolutionOne; //newSequentialCode
   lastCrankAngleCalc = micros(); //micros() is no longer interrupt safe
   interrupts();
 
@@ -4838,20 +4907,33 @@ int getCrankAngle_Vmax(void)
   int crankAngle;
   crankAngle=toothAngles[tempsecondaryToothCount] + configPage4.triggerAngle;
   
+  //Sequential check (simply sets whether we're on the first or 2nd revolution of the cycle)//newSequentialCode
+  if (tempRevolutionOne == true && configPage2.injLayout == INJ_SEQUENTIAL) { crankAngle += 360; }//newSequentialCode
+
+  
   //Estimate the number of degrees travelled since the last tooth}
   elapsedTime = (lastCrankAngleCalc - tempToothLastToothTime);
-  crankAngle += timeToAngleDegPerMicroSec(elapsedTime);
+  crankAngle += timeToAngle(elapsedTime, CRANKMATH_METHOD_INTERVAL_REV);
 
+  ////Serial.print("Before: ");
+ //// Serial.print(crankAngle);
+ //// if(BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK)){
+////    Serial.print(" Cranking ");
+////  }
   if (crankAngle >= 720) { crankAngle -= 720; }
   if (crankAngle > CRANK_ANGLE_MAX) { crankAngle -= CRANK_ANGLE_MAX; }
   if (crankAngle < 0) { crankAngle += 360; }
-
+  //currentStatus.syncLossCounter = crankAngle/10;//TEMP for seeing the angle
+ //// Serial.print(" after: ");
+  //Serial.println(crankAngle);
   return crankAngle;
 }
 
-void triggerSetEndTeeth_Vmax(void)
+void triggerSetEndTeeth_Vmax()
 {
+  lastToothCalcAdvance = currentStatus.advance;
 }
+
 
 /** @} */
 

@@ -685,10 +685,14 @@ void initialiseAll(void)
         }
         else if (configPage2.injLayout == INJ_SEQUENTIAL)
         {
-          channel2InjDegrees = 180;
-          channel3InjDegrees = 360;
-          channel4InjDegrees = 540;
-
+		    //editRempage, angles changed so I can do oddsquirt.
+        //channel2InjDegrees = 180;
+        //channel3InjDegrees = 360; 
+        //channel4InjDegrees = 540; 
+         
+          channel2InjDegrees = configPage2.oddfire2; // editRemco, changed from 180;
+          channel3InjDegrees = configPage2.oddfire3; // editRemco, changed from 360;
+          channel4InjDegrees = configPage2.oddfire4; // editRemco, changed from 540;
           maxInjOutputs = 4;
 
           CRANK_ANGLE_MAX_INJ = 720;
@@ -1339,6 +1343,9 @@ void initialiseAll(void)
     readCLT(false); // Need to read coolant temp to make priming pulsewidth work correctly. The false here disables use of the filter
     readTPS(false); // Need to read tps to detect flood clear state
 
+	  //editRempage: Start serial again, needed for Teensy
+    Serial.begin(115200);
+
     /* tacho sweep function. */
     //tachoStatus.tachoSweepEnabled = (configPage2.useTachoSweep > 0);
     /* SweepMax is stored as a byte, RPM/100. divide by 60 to convert min to sec (net 5/3).  Multiply by ignition pulses per rev.
@@ -1458,8 +1465,8 @@ void setPinMapping(byte boardID)
       pinInjector2 = 9; //Output pin injector 2 is on
       pinInjector3 = 10; //Output pin injector 3 is on
       pinInjector4 = 11; //Output pin injector 4 is on
-      pinInjector5 = 12; //Output pin injector 5 is on
-      pinInjector6 = 50; //CAUTION: Uses the same as Coil 4 below. 
+      //pinInjector5 = 12; //Output pin injector 5 is on
+      //pinInjector6 = 50; //CAUTION: Uses the same as Coil 4 below. 
       pinCoil1 = 40; //Pin for coil 1
       pinCoil2 = 38; //Pin for coil 2
       pinCoil3 = 52; //Pin for coil 3
@@ -1470,7 +1477,9 @@ void setPinMapping(byte boardID)
       pinTrigger3 = 3; //The Cam sensor 2 pin
       pinTPS = A2;//TPS input pin
       pinMAP = A3; //MAP sensor pin
-      pinIAT = A0; //IAT sensor pin
+      //pinIAT = A0; //IAT sensor pin
+      pinIAT = A7; //IAT sensor pin // editRemco, put on an unconnected analog in
+      pinMAP2 = A0; //editRemco, used for analog in of CAM signal.
       pinCLT = A1; //CLS sensor pin
       pinO2 = A8; //O2 Sensor pin
       pinBat = A4; //Battery reference voltage pin
@@ -1496,7 +1505,16 @@ void setPinMapping(byte boardID)
       pinWMIEnabled = 42;
 
       #if defined(CORE_TEENSY35)
-        pinInjector6 = 51;
+        //pinInjector6 = 51;
+        pinIdle1 = 51; //editRemco move to unused output so it can be used for injectors.
+        pinIdle2 = 52; //editRemco move to unused output so it can be used for injectors.
+        pinStepperEnable = 53; //editRemco move to unused output so it can be used for injectors.
+        pinBoost = 12; //editRemco move to unused output so it can be used for injectors.
+        
+        pinInjector5 = 5; //editRemco new injector pinout
+        pinInjector6 = 7; //editRemco new injector pinout
+        pinInjector7 = 6; //editRemco new injector pinout
+        pinInjector8 = 24; //editRemco new injector pinout
 
         pinTrigger = 23;
         pinTrigger2 = 36;
@@ -1509,11 +1527,6 @@ void setPinMapping(byte boardID)
         pinCoil4 = 29;
         pinCoil3 = 30;
         pinO2 = A22;
-
-        //Make sure the CAN pins aren't overwritten
-        pinTrigger3 = 54;
-        pinVVT_1 = 55;
-
       #elif defined(CORE_TEENSY41)
         //These are only to prevent lockups or weird behaviour on T4.1 when this board is used as the default
         pinBaro = A4; 
