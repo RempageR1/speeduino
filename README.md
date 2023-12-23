@@ -21,6 +21,9 @@ The Speeduino project is a flexible, fully featured Engine Management Systems (E
 ## Documentation
 The Speeduino online manual can be found at: https://wiki.speeduino.com
 
+##
+This fork is used for some of my specific requirements for the Vmax. This includes sequential through the map-pressure, 8 channels injection that use the oddfire timing and a workaround to get Wifi over Serial working.
+
 ## Where to Buy
 [Pre-made Speeduino units/boards are available from a number of official resellers](https://speeduino.com/home/where-to-buy)
 
