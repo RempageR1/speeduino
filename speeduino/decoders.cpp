@@ -4670,9 +4670,6 @@ Trigger is based on 'CHANGE' so we get a signal on the up and downward edges of 
 void triggerSetup_Vmax(void)
 {
   triggerToothAngle = 0; // The number of degrees that passes from tooth to tooth, ev. 0. It alternates uneven
-  //secondDerivEnabled = false; //editRempage changed code
-  //decoderIsSequential = true; //newSequentialCode
-
   BIT_CLEAR(decoderState, BIT_DECODER_2ND_DERIV);
   BIT_SET(decoderState, BIT_DECODER_IS_SEQUENTIAL);
   BIT_SET(decoderState, BIT_DECODER_HAS_SECONDARY);
@@ -4683,8 +4680,8 @@ void triggerSetup_Vmax(void)
   toothLastMinusOneSecToothTime = 0; //Register the last MAP2 for diff
   toothLastSecToothTime = 0; //Get current MAP2
   
-  MAX_STALL_TIME = (3333UL * 60); //Minimum 50rpm. (3333uS is the time per degree at 50rpm)
-  if(initialisationComplete == false) { toothLastToothTime = micros(); } //Set a startup value here to avoid filter errors when starting. This MUST have the initi check to prevent the fuel pump just staying on all the time
+  MAX_STALL_TIME = ((MICROS_PER_DEG_1_RPM/50U) * 60U); //Minimum 50rpm. (3333uS is the time per degree at 50rpm)
+  if(currentStatus.initialisationComplete == false) { toothLastToothTime = micros(); } //Set a startup value here to avoid filter errors when starting. This MUST have the initi check to prevent the fuel pump just staying on all the time
   triggerFilterTime = 1500;
   BIT_SET(decoderState, BIT_DECODER_VALID_TRIGGER); // We must start with a valid trigger or we cannot start measuring the lobe width. We only have a false trigger on the lobe up event when it doesn't pass the filter. Then, the lobe width will also not be beasured.
   toothAngles[1] = 0;      //tooth #1, these are the absolute tooth positions
@@ -4913,25 +4910,24 @@ int getCrankAngle_Vmax(void)
   
   //Estimate the number of degrees travelled since the last tooth}
   elapsedTime = (lastCrankAngleCalc - tempToothLastToothTime);
-  crankAngle += timeToAngle(elapsedTime, CRANKMATH_METHOD_INTERVAL_REV);
+  crankAngle += timeToAngleDegPerMicroSec(elapsedTime);
 
   ////Serial.print("Before: ");
- //// Serial.print(crankAngle);
- //// if(BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK)){
-////    Serial.print(" Cranking ");
-////  }
+  //// Serial.print(crankAngle);
+  //// if(BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK)){
+  ////    Serial.print(" Cranking ");
+  ////  }
   if (crankAngle >= 720) { crankAngle -= 720; }
   if (crankAngle > CRANK_ANGLE_MAX) { crankAngle -= CRANK_ANGLE_MAX; }
   if (crankAngle < 0) { crankAngle += 360; }
   //currentStatus.syncLossCounter = crankAngle/10;//TEMP for seeing the angle
- //// Serial.print(" after: ");
+  //// Serial.print(" after: ");
   //Serial.println(crankAngle);
   return crankAngle;
 }
 
 void triggerSetEndTeeth_Vmax(void)
 {
-  lastToothCalcAdvance = currentStatus.advance;
 }
 
 
