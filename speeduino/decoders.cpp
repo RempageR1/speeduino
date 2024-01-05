@@ -4875,11 +4875,11 @@ uint16_t getRPM_Vmax(void)
         toothTime = (toothLastToothTime - toothLastMinusOneToothTime); 
         interrupts();
         toothTime = toothTime * 36;
-        tempRPM = ((unsigned long)tempToothAngle * 6000000UL) / toothTime;
+        tempRPM = ((unsigned long)tempToothAngle * (MICROS_PER_MIN/10U)) / toothTime;
       }
     }
     else {
-      tempRPM = stdGetRPM(360);
+      tempRPM = stdGetRPM(CRANK_SPEED);
     }
   }
   return tempRPM;
