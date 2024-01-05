@@ -4871,7 +4871,7 @@ uint16_t getRPM_Vmax(void)
       {
         noInterrupts();
         tempToothAngle = triggerToothAngle;
-        revolutionTime = (toothOneTime - toothOneMinusOneTime); //The time in uS that one revolution would take at current speed (The time tooth 1 was last seen, minus the time it was seen prior to that)
+        SetRevolutionTime(toothOneTime - toothOneMinusOneTime); //The time in uS that one revolution would take at current speed (The time tooth 1 was last seen, minus the time it was seen prior to that)
         toothTime = (toothLastToothTime - toothLastMinusOneToothTime); 
         interrupts();
         toothTime = toothTime * 36;
