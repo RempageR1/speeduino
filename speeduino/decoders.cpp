@@ -4912,17 +4912,9 @@ int getCrankAngle_Vmax(void)
   elapsedTime = (lastCrankAngleCalc - tempToothLastToothTime);
   crankAngle += timeToAngleDegPerMicroSec(elapsedTime);
 
-  ////Serial.print("Before: ");
-  //// Serial.print(crankAngle);
-  //// if(BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK)){
-  ////    Serial.print(" Cranking ");
-  ////  }
   if (crankAngle >= 720) { crankAngle -= 720; }
   if (crankAngle > CRANK_ANGLE_MAX) { crankAngle -= CRANK_ANGLE_MAX; }
   if (crankAngle < 0) { crankAngle += 360; }
-  //currentStatus.syncLossCounter = crankAngle/10;//TEMP for seeing the angle
-  //// Serial.print(" after: ");
-  //Serial.println(crankAngle);
   return crankAngle;
 }
 
