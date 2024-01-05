@@ -4802,7 +4802,7 @@ void triggerPri_Vmax(void)
             secondaryToothCount = 6;
             triggerToothAngle = 70;
             setFilter(curGap);//Angle to this tooth is 70, next is in 70. No need to compensate.
-      toothLastSecToothTime = analogRead(pinMAP2);//Get current MAP2 to use at tooth 1.
+            toothLastSecToothTime = analogRead(pinMAP2);//Get current MAP2 to use at tooth 1.
           }
           toothLastMinusOneToothTime = toothLastToothTime;
           toothLastToothTime = curTime;
@@ -4821,8 +4821,8 @@ void triggerPri_Vmax(void)
   }
   else if( BIT_CHECK(decoderState, BIT_DECODER_VALID_TRIGGER) ) // Inverted due to vr conditioner. So this is the falling lobe. We only process if there was a valid trigger.
   {
-    curGap3 = curTime - curGap2;
-    if (curGap3 > (lastGap * 2)){// Small lobe is 5 degrees, big lobe is 45 degrees. So this should be the wide lobe.
+    unsigned long curGapLocal = curTime - curGap2;
+    if (curGapLocal > (lastGap * 2)){// Small lobe is 5 degrees, big lobe is 45 degrees. So this should be the wide lobe.
         if (toothCurrentCount == 0 || toothCurrentCount == 6){//Wide should be seen with toothCurrentCount = 0, when there is no sync yet, or toothCurrentCount = 6 when we have done a full revolution. 
           currentStatus.hasSync = true;
         }
@@ -4915,6 +4915,7 @@ int getCrankAngle_Vmax(void)
   if (crankAngle >= 720) { crankAngle -= 720; }
   if (crankAngle > CRANK_ANGLE_MAX) { crankAngle -= CRANK_ANGLE_MAX; }
   if (crankAngle < 0) { crankAngle += 360; }
+
   return crankAngle;
 }
 
