@@ -1523,9 +1523,9 @@ void setPinMapping(byte boardID)
         pinCoil1 = 31;
         pinCoil2 = 32;
         pinTachOut = 28;
-        pinFan = 27;
+        pinFan = 30; //editRemco 30 swapped with 27 since 30 is dead
         pinCoil4 = 29;
-        pinCoil3 = 30;
+        pinCoil3 = 27; //editRemco 30 swapped with 27 since 30 is dead
         pinO2 = A22;
       #elif defined(CORE_TEENSY41)
         //These are only to prevent lockups or weird behaviour on T4.1 when this board is used as the default

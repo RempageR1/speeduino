@@ -562,7 +562,16 @@ void loop(void)
           if((configPage2.injLayout == INJ_SEQUENTIAL) && currentStatus.hasSync)
           {
             if( CRANK_ANGLE_MAX_INJ != 720 ) { changeHalfToFullSync(); }
-
+              if ( currentStatus.RPM < 500){//editRempage: Injections are double below 500 RPM, this kind of helps but is not perfect.
+                channel2InjDegrees = 0;
+                channel3InjDegrees = 0;
+                channel4InjDegrees = 0;
+              }
+              else{
+                channel2InjDegrees = configPage2.oddfire2;
+                channel3InjDegrees = configPage2.oddfire3;
+                channel4InjDegrees = configPage2.oddfire4;
+              }
             injector3StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel3InjDegrees, currentStatus.injAngle);
             injector4StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel4InjDegrees, currentStatus.injAngle);
             #if INJ_CHANNELS >= 8
