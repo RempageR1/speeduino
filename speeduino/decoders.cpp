@@ -4870,6 +4870,12 @@ uint16_t getRPM_Vmax(void)
       tempRPM = stdGetRPM(CRANK_SPEED);
     }
   }
+  if (tempRPM < 1000){
+    BIT_SET(currentStatus.status3, BIT_STATUS3_HALFSYNC);
+  }
+  else{
+    BIT_CLEAR(currentStatus.status3, BIT_STATUS3_HALFSYNC);
+  }
   return tempRPM;
 }
 
