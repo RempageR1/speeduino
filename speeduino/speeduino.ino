@@ -565,11 +565,6 @@ void loop(void)
          //   channel4InjDegrees = configPage2.oddfire4;
          //   }
           injector2StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel2InjDegrees, currentStatus.injAngle);
-          //Serial.print(PWdivTimerPerDegree);
-          //Serial.print(" ");
-          //Serial.print(currentStatus.injAngle);
-          //Serial.print(" ");
-          //Serial.println(injector2StartAngle);
 
           if((configPage2.injLayout == INJ_SEQUENTIAL) && currentStatus.hasSync)
           {

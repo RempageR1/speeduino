@@ -114,7 +114,7 @@ void initialiseAll(void)
     
   #ifdef SD_LOGGING
     initRTC();
-    initSD();
+    //initSD(); editRempage: SD is not used and init takes 2 seconds of boot time.
   #endif
 
     Serial.begin(115200);
@@ -312,7 +312,6 @@ void initialiseAll(void)
     #if defined(secondarySerial_AVAILABLE)
       if (configPage9.enable_secondarySerial == 1) { secondarySerial.begin(115200); }
     #endif
-
     //End all coil charges to ensure no stray sparks on startup
     endCoil1Charge();
     endCoil2Charge();
@@ -699,9 +698,9 @@ void initialiseAll(void)
         //channel3InjDegrees = 360; 
         //channel4InjDegrees = 540; 
          
-          channel2InjDegrees = configPage2.oddfire2; // editRemco, changed from 180;
-          channel3InjDegrees = configPage2.oddfire3; // editRemco, changed from 360;
-          channel4InjDegrees = configPage2.oddfire4; // editRemco, changed from 540;
+          channel2InjDegrees = configPage2.oddfire2; // editRempage, changed from 180;
+          channel3InjDegrees = configPage2.oddfire3; // editRempage, changed from 360;
+          channel4InjDegrees = configPage2.oddfire4; // editRempage, changed from 540;
           maxInjOutputs = 4;
 
           CRANK_ANGLE_MAX_INJ = 720;
@@ -1487,8 +1486,8 @@ void setPinMapping(byte boardID)
       pinTPS = A2;//TPS input pin
       pinMAP = A3; //MAP sensor pin
       //pinIAT = A0; //IAT sensor pin
-      pinIAT = A7; //IAT sensor pin // editRemco, put on an unconnected analog in
-      pinMAP2 = A0; //editRemco, used for analog in of CAM signal.
+      pinIAT = A7; //IAT sensor pin // editRempage, put on an unconnected analog in
+      pinMAP2 = A0; //editRempage, used for analog in of CAM signal.
       pinCLT = A1; //CLS sensor pin
       pinO2 = A8; //O2 Sensor pin
       pinBat = A4; //Battery reference voltage pin
@@ -1515,15 +1514,15 @@ void setPinMapping(byte boardID)
 
       #if defined(CORE_TEENSY35)
         //pinInjector6 = 51;
-        pinIdle1 = 51; //editRemco move to unused output so it can be used for injectors.
-        pinIdle2 = 52; //editRemco move to unused output so it can be used for injectors.
-        pinStepperEnable = 53; //editRemco move to unused output so it can be used for injectors.
-        pinBoost = 12; //editRemco move to unused output so it can be used for injectors.
+        pinIdle1 = 51; //editRempage move to unused output so it can be used for injectors.
+        pinIdle2 = 52; //editRempage move to unused output so it can be used for injectors.
+        pinStepperEnable = 53; //editRempage move to unused output so it can be used for injectors.
+        pinBoost = 12; //editRempage move to unused output so it can be used for injectors.
         
-        pinInjector5 = 5; //editRemco new injector pinout
-        pinInjector6 = 7; //editRemco new injector pinout
-        pinInjector7 = 6; //editRemco new injector pinout
-        pinInjector8 = 24; //editRemco new injector pinout
+        pinInjector5 = 5; //editRempage new injector pinout
+        pinInjector6 = 7; //editRempage new injector pinout
+        pinInjector7 = 6; //editRempage new injector pinout
+        pinInjector8 = 24; //editRempage new injector pinout
 
         pinTrigger = 23;
         pinTrigger2 = 36;
@@ -1532,9 +1531,9 @@ void setPinMapping(byte boardID)
         pinCoil1 = 31;
         pinCoil2 = 32;
         pinTachOut = 28;
-        pinFan = 30; //editRemco 30 swapped with 27 since 30 is dead
+        pinFan = 30; //editRempage 30 swapped with 27 since 30 is dead
         pinCoil4 = 29;
-        pinCoil3 = 27; //editRemco 30 swapped with 27 since 30 is dead
+        pinCoil3 = 27; //editRempage 30 swapped with 27 since 30 is dead
         pinO2 = A22;
       #elif defined(CORE_TEENSY41)
         //These are only to prevent lockups or weird behaviour on T4.1 when this board is used as the default
@@ -2214,6 +2213,71 @@ void setPinMapping(byte boardID)
       pinSpareLOut4 = 21; //low current output spare4 PLACEHOLDER value for now
       pinFan = 12; //Pin for the fan output
       pinResetControl = 46; //Reset control output PLACEHOLDER value for now
+    break;
+
+    
+  case 43:
+      //Pin mappings for all GasDuino
+      injectorOutputControl = OUTPUT_CONTROL_MC33810;
+      ignitionOutputControl = OUTPUT_CONTROL_MC33810;
+      pinMC33810_1_CS = 9;
+      pinMC33810_2_CS = 10;
+      //Pin alignment to the MC33810 outputs
+      MC33810_BIT_INJ1 = 3;
+      MC33810_BIT_INJ2 = 1;
+      MC33810_BIT_INJ3 = 0;
+      MC33810_BIT_INJ4 = 2;
+      MC33810_BIT_IGN1 = 4;
+      MC33810_BIT_IGN2 = 5;
+      MC33810_BIT_IGN3 = 6;
+      MC33810_BIT_IGN4 = 7;
+
+      MC33810_BIT_INJ5 = 3;
+      MC33810_BIT_INJ6 = 1;
+      MC33810_BIT_INJ7 = 0;
+      MC33810_BIT_INJ8 = 2;
+      // MC33810_BIT_IGN5 = 4;
+      // MC33810_BIT_IGN6 = 5;
+      // MC33810_BIT_IGN7 = 6;
+      // MC33810_BIT_IGN8 = 7;
+
+      //The injector pins below are not used directly as the control is via SPI through the MC33810s, however the pin numbers are set to be the SPI pins (SCLK, MOSI, MISO and CS) so that nothing else will set them as inputs
+      pinInjector1 = 13; //SCLK
+      pinInjector2 = 11; //MOSI
+      pinInjector3 = 12; //MISO
+      pinInjector4 = 10; //CS for MC33810 1
+      pinInjector5 = 9; //CS for MC33810 2
+      pinInjector6 = 9; //CS for MC33810 3
+
+      //Dummy pins, without thes pin 0 (Serial1 RX) gets overwritten
+      pinCoil1 = 40;
+      pinCoil2 = 41;
+
+      //Pin mapping for Gasduino
+      pinBaro = A4; 
+      pinMAP = A5;
+      pinMAP2 = A16; //editRempage, using oil pressure pin for Map2
+      pinTPS = A3; //TPS input pin
+      pinIAT = A0; //IAT sensor pin
+      pinCLT = A1; //CLT sensor pin
+      pinO2 = A10; //O2 Sensor pin
+      pinO2_2 = A2; //editRempage, using external o2
+      pinBat = A15; //Battery reference voltage pin. Needs Alpha4+
+      pinFlex = A11;
+      pinLaunch = 26;
+      pinIdle1 = 29;
+      pinFuelPump = 30;
+      pinVVT_1 = 31;
+      pinBoost = 27;
+      pinFan = 28;
+      pinTachOut = 4;
+      pinTrigger = 20; //The CAS pin
+      pinTrigger2 = 21; //The Cam Sensor pin
+      pinSpareTemp1 = A16; 
+      pinSpareTemp2 = A17;
+
+      pinResetControl = 49; //PLaceholder only. Cannot use 42-47 as these are the SD card
+
     break;
     
     case 45:

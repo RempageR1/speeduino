@@ -4696,7 +4696,7 @@ void triggerPri_Vmax(void)
             setFilter( ((curGap*4)/7) );//Angle to this tooth is 70, next is in 40, compensating.
             currentStatus.startRevolutions++; //Counter
 
-                        //Code to check 'cam' signal. Tooth 6 has proven to be the best to measure pressure differences when using front-left cylinder.
+            //Code to check 'cam' signal. Tooth 6 has proven to be the best to measure pressure differences when using front-left cylinder.
             /*if(triggerSecFilterTime < 1000){//When confidence reaches 1000, we are done. This counter is reset when loss of sync occurs.
               if (currentStatus.TPS < 60){// We only want the signal when below 30% TPS (TPS is in 0.5% increments)
                 if (toothLastSecToothTime == toothLastMinusOneSecToothTime){//Same value, we flip but not change confidence.
@@ -4779,6 +4779,7 @@ void triggerPri_Vmax(void)
             secondaryToothCount = 6;
             triggerToothAngle = 70;
             setFilter(curGap);//Angle to this tooth is 70, next is in 70. No need to compensate.
+            toothLastSecToothTime = analogRead(pinMAP2);//Get current MAP2 to use at tooth 1.
           }
           toothLastMinusOneToothTime = toothLastToothTime;
           toothLastToothTime = curTime;
