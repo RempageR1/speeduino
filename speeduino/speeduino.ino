@@ -553,17 +553,6 @@ void loop(void)
           break;
         //4 cylinders
         case 4:
-          //injector2StartAngle = calculateInjector2StartAngle(PWdivTimerPerDegree);
-          //if ( currentStatus.RPM < 600){//editRempage: Injections are double below 500 RPM, this kind of helps but is not perfect.
-          //  channel2InjDegrees = 0;
-          //  channel3InjDegrees = 0;
-         //   channel4InjDegrees = 0;
-         // }
-         // else{
-         //   channel2InjDegrees = configPage2.oddfire2;
-         //   channel3InjDegrees = configPage2.oddfire3;
-         //   channel4InjDegrees = configPage2.oddfire4;
-         //   }
           injector2StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel2InjDegrees, currentStatus.injAngle);
 
           if((configPage2.injLayout == INJ_SEQUENTIAL) && currentStatus.hasSync)

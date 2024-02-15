@@ -2273,7 +2273,7 @@ void setPinMapping(byte boardID)
       pinTachOut = 4;
       pinTrigger = 20; //The CAS pin
       pinTrigger2 = 21; //The Cam Sensor pin
-      pinSpareTemp1 = A16; 
+      //pinSpareTemp1 = A16; editRempage used for MAP2.
       pinSpareTemp2 = A17;
 
       pinResetControl = 49; //PLaceholder only. Cannot use 42-47 as these are the SD card
