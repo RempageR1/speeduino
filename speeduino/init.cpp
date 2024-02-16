@@ -312,6 +312,7 @@ void initialiseAll(void)
     #if defined(secondarySerial_AVAILABLE)
       if (configPage9.enable_secondarySerial == 1) { secondarySerial.begin(115200); }
     #endif
+    
     //End all coil charges to ensure no stray sparks on startup
     endCoil1Charge();
     endCoil2Charge();
