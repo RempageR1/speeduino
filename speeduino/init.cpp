@@ -307,7 +307,7 @@ void initialiseAll(void)
     #if defined(NATIVE_CAN_AVAILABLE)
       initCAN();
     #endif
-    
+
     //Must come after setPinMapping() as secondary serial can be changed on a per board basis
     #if defined(secondarySerial_AVAILABLE)
       if (configPage9.enable_secondarySerial == 1) { secondarySerial.begin(115200); }

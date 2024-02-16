@@ -39,6 +39,7 @@ static inline uint32_t _calculateInjectorTimeout(const FuelSchedule &schedule, u
       return 0;
     }
   }
+  
   return angleToTimeMicroSecPerDegree((uint16_t)delta);
 }
 
