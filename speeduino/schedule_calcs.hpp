@@ -39,17 +39,7 @@ static inline uint32_t _calculateInjectorTimeout(const FuelSchedule &schedule, u
       return 0;
     }
   }
-  if ( currentStatus.RPM < 200){//editRempage divide timeout by 64 to avoid dual injections below 200RPM
-    return angleToTimeMicroSecPerDegree((uint16_t)delta)/64;
-  }
-  else if ( currentStatus.RPM < 1200){//editRempage divide timeout by 8 to avoid dual injections below 1200RPM
-    return angleToTimeMicroSecPerDegree((uint16_t)delta)/8;
-  }
-  else{
-    return angleToTimeMicroSecPerDegree((uint16_t)delta);
-  }  
-  
-  //return angleToTimeMicroSecPerDegree((uint16_t)delta);
+  return angleToTimeMicroSecPerDegree((uint16_t)delta);
 }
 
 static inline int _adjustToInjChannel(int angle, int channelInjDegrees) {
