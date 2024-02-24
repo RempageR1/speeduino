@@ -71,6 +71,7 @@
     #define CORE_TEENSY41
     #define BOARD_H "board_teensy41.h"
     #define BOARD_MAX_ADC_PINS  17 //Number of analog pins
+    //#define Serial Serial2//editRempage: define serial to Wifi/BT
   #endif
   #define INJ_CHANNELS 8
   #define IGN_CHANNELS 8
@@ -587,6 +588,7 @@ struct statuses {
   uint16_t mapADC;
   int baroADC;
   long MAP;     ///< Manifold absolute pressure. Has to be a long for PID calcs (Boost control)
+  long MAP2;     ///< Manifold absolute pressure. EditRempage used to get the map2 used for sequential.
   int16_t EMAP; ///< EMAP ... (See @ref config6.useEMAP for EMAP enablement)
   uint16_t EMAPADC;
   byte baro;   ///< Barometric pressure is simply the initial MAP reading, taken before the engine is running. Alternatively, can be taken from an external sensor

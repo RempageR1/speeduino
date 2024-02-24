@@ -43,6 +43,7 @@ A full copy of the license may be found in the projects root directory
 #include "timers.h"
 #include "schedule_calcs.h"
 
+
 void nullTriggerHandler (void){return;} //initialisation function for triggerhandlers, does exactly nothing
 uint16_t nullGetRPM(void){return 0;} //initialisation function for getRpm, returns safe value of 0
 int nullGetCrankAngle(void){return 0;} //initialisation function for getCrankAngle, returns safe value of 0
@@ -4779,7 +4780,8 @@ void triggerPri_Vmax(void)
             secondaryToothCount = 6;
             triggerToothAngle = 70;
             setFilter(curGap);//Angle to this tooth is 70, next is in 70. No need to compensate.
-            toothLastSecToothTime = analogRead(pinMAP2);//Get current MAP2 to use at tooth 1.
+            //toothLastSecToothTime = analogRead(pinMAP2);//Get current MAP2 to use at tooth 1.
+            toothLastSecToothTime = currentStatus.MAP2;//Get current MAP2 which is part of readMAP() now since Teensy 4.1 cannot handle multiple analogReads at the same time.
           }
           toothLastMinusOneToothTime = toothLastToothTime;
           toothLastToothTime = curTime;
@@ -4895,8 +4897,6 @@ int getCrankAngle_Vmax(void)
 void triggerSetEndTeeth_Vmax(void)
 {
 }
-
-
 
 /** @} */
 
