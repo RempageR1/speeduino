@@ -118,6 +118,9 @@ void initialiseAll(void)
   #endif
 
     Serial.begin(115200);
+
+
+
     BIT_SET(currentStatus.status4, BIT_STATUS4_ALLOW_LEGACY_COMMS); //Flag legacy comms as being allowed on startup
 
     //Repoint the 2D table structs to the config pages that were just loaded
@@ -207,7 +210,6 @@ void initialiseAll(void)
     rotarySplitTable.xSize = 8;
     rotarySplitTable.values = configPage10.rotarySplitValues;
     rotarySplitTable.axisX = configPage10.rotarySplitBins;
-
     flexFuelTable.valueSize = SIZE_BYTE;
     flexFuelTable.axisSize = SIZE_BYTE; //Set this table to use byte axis bins
     flexFuelTable.xSize = 6;
@@ -252,7 +254,6 @@ void initialiseAll(void)
     coolantProtectTable.values = configPage9.coolantProtRPM;
     coolantProtectTable.axisX = configPage9.coolantProtTemp;
 
-
     fanPWMTable.valueSize = SIZE_BYTE;
     fanPWMTable.axisSize = SIZE_BYTE; //Set this table to use byte axis bins
     fanPWMTable.xSize = 4;
@@ -289,6 +290,7 @@ void initialiseAll(void)
     o2CalibrationTable.values = o2Calibration_values;
     o2CalibrationTable.axisX = o2Calibration_bins;
     
+
     //Setup the calibration tables
     loadCalibration();
 
@@ -310,7 +312,9 @@ void initialiseAll(void)
 
     //Must come after setPinMapping() as secondary serial can be changed on a per board basis
     #if defined(secondarySerial_AVAILABLE)
-      if (configPage9.enable_secondarySerial == 1) { secondarySerial.begin(115200); }
+      if (configPage9.enable_secondarySerial == 1) { 
+        secondarySerial.begin(115200);
+        }
     #endif
 
     //End all coil charges to ensure no stray sparks on startup
@@ -1354,6 +1358,7 @@ void initialiseAll(void)
 
 	  //editRempage: Start serial again, needed for Teensy
     Serial.begin(115200);
+    secondarySerial.begin(115200);
 
     /* tacho sweep function. */
     //tachoStatus.tachoSweepEnabled = (configPage2.useTachoSweep > 0);
@@ -2278,6 +2283,7 @@ void setPinMapping(byte boardID)
       pinSpareTemp2 = A17;
 
       pinResetControl = 49; //PLaceholder only. Cannot use 42-47 as these are the SD card
+      pSecondarySerial = &Serial2;//editRempage, try to get serial2 going.
 
     break;
     

@@ -107,6 +107,8 @@ void loop(void)
       }
       
       //Check for any CAN comms requiring action 
+        //secondarySerial.begin(115200);//editRemco
+        //secondarySerial.println("check");//editRemco
       #if defined(secondarySerial_AVAILABLE)
         //if can or secondary serial interface is enabled then check for requests.
         if (configPage9.enable_secondarySerial == 1)  //secondary serial interface enabled

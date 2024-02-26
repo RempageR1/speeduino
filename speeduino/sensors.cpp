@@ -274,8 +274,8 @@ void readMAP(void)
   unsigned int tempReading;
 
   //editRempage since MAP2 cannot be read on the Teensy 4.1 directly in decoder, we do it here.
-  tempReading = analogRead(pinMAP2);//editRemco
-  tempReading = analogRead(pinMAP2);//editRemco
+  tempReading = analogRead(pinMAP2);//editRempage
+  tempReading = analogRead(pinMAP2);//editRempage
   currentStatus.MAP2 = tempReading;
 
   //MAP Sampling system
