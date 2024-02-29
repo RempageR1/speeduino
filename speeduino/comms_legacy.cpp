@@ -783,7 +783,7 @@ void sendValuesLegacy(void)
   bytestosend -= Serial.write(temp>>8);
   bytestosend -= Serial.write(temp);
 
-  temp = currentStatus.TPS * 10;
+  temp = currentStatus.TPS * 5;//editRempage this is how to fix TPS in RealDash
   bytestosend -= Serial.write(temp>>8);
   bytestosend -= Serial.write(temp);
 

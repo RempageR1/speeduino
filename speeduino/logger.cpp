@@ -366,7 +366,7 @@ uint8_t getLegacySecondarySerialLogEntry(uint16_t byteNum)
     case 21: statusValue = highByte(currentStatus.PW1); break; //Pulsewidth 1 multiplied by 10 in ms. Have to convert from uS to mS.
     case 22: statusValue = (uint8_t)(currentStatus.tpsDOT / 10); break; //TPS DOT
     case 23: statusValue = currentStatus.advance; break;
-    case 24: statusValue = currentStatus.TPS/2; break; // TPS (0% to 100%)//editRempage, half it for RealDash to work
+    case 24: statusValue = currentStatus.TPS;
     case 25: statusValue = lowByte(currentStatus.loopsPerSecond); break;
     case 26: statusValue = highByte(currentStatus.loopsPerSecond); break;
 
