@@ -30,6 +30,8 @@
 #include <assert.h>
 #include "src/FastCRC/FastCRC.h"
 
+#define TESTMODE //editRempage adding TESTMODE to switch VE conditioner inputs and fake MAP2
+
 #if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega2561__)
   #define BOARD_MAX_DIGITAL_PINS 54 //digital pins +1
   #define BOARD_MAX_IO_PINS 70 //digital pins + analog channels + 1

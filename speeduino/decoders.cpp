@@ -4698,53 +4698,54 @@ void triggerPri_Vmax(void)
             currentStatus.startRevolutions++; //Counter
 
             //Code to check 'cam' signal. Tooth 6 has proven to be the best to measure pressure differences when using front-left cylinder.
-            /*if(triggerSecFilterTime < 1000){//When confidence reaches 1000, we are done. This counter is reset when loss of sync occurs.
-              if (currentStatus.TPS < 60){// We only want the signal when below 30% TPS (TPS is in 0.5% increments)
-                if (toothLastSecToothTime == toothLastMinusOneSecToothTime){//Same value, we flip but not change confidence.
-                  revolutionOne = !revolutionOne; //Flip sequential revolution tracker
-                }
-                else if (toothLastSecToothTime < toothLastMinusOneSecToothTime && revolutionOne == false){// Sec is true, last one was false. Add confidence and continue. Current MAP is lower we are likely on the 2nd revolution (361-720)
-                  triggerSecFilterTime++;
-                  revolutionOne = true;
-                }
-                else if (toothLastSecToothTime > toothLastMinusOneSecToothTime && revolutionOne == true){// Sec is false, last one was true. Add confidence and continue.
-                  triggerSecFilterTime++;
-                  revolutionOne = false;
-                }
-                else if (toothLastSecToothTime < toothLastMinusOneSecToothTime && revolutionOne == true){// Sec is true, last one was true. Which is wrong. Reduce confidence.
-                  if (triggerSecFilterTime > 0){// If confidence is above 0, we flip secondary. If it goes below 0, we do not so the primary and secondary revolutions are reversed.
-                     revolutionOne = false;   
-                     triggerSecFilterTime--;               
-                  }
-                  else{
-                    currentStatus.syncLossCounter = 100;// Confidense is 0 or below, set syncLossCouter to 100 so we have logging.
-                  }
-                }
-                else if (toothLastSecToothTime > toothLastMinusOneSecToothTime && revolutionOne == false){// Sec is false, last one was false. Which is wrong. Reduce confidence.
-                  if (triggerSecFilterTime > 0){// If confidence is above 0, we flip secondary. If it goes below 0, we do not so the primary and secondary revolutions are reversed.
-                     revolutionOne = true;    
-                     triggerSecFilterTime--;              
-                  }
-                  else{
-                    currentStatus.syncLossCounter = 100;// Confidense is 0 or below, set syncLossCouter to 100 so we have logging.
-                  }
-                }                
-                if  (triggerSecFilterTime == 20){
-                  currentStatus.syncLossCounter = 110;// Confidense is above 20, so we have full Sync, set syncLossCouter to 110 so we have logging.
-                }
-                if (triggerSecFilterTime == 1000){
-                  currentStatus.syncLossCounter = 120;// Routine is done (untill engine stops or we have sync loss, set syncLossCouter to 120 so we have logging.
-                } 
+            #if not defined(TESTMODE)//If testmode is not used, this code is executed.
+              if(triggerSecFilterTime < 1000){//When confidence reaches 1000, we are done. This counter is reset when loss of sync occurs.
+               if (currentStatus.TPS < 60){// We only want the signal when below 30% TPS (TPS is in 0.5% increments)
+                 if (toothLastSecToothTime == toothLastMinusOneSecToothTime){//Same value, we flip but not change confidence.
+                   revolutionOne = !revolutionOne; //Flip sequential revolution tracker
+                 }
+                 else if (toothLastSecToothTime < toothLastMinusOneSecToothTime && revolutionOne == false){// Sec is true, last one was false. Add confidence and continue. Current MAP is lower we are likely on the 2nd revolution (361-720)
+                   triggerSecFilterTime++;
+                   revolutionOne = true;
+                 }
+                 else if (toothLastSecToothTime > toothLastMinusOneSecToothTime && revolutionOne == true){// Sec is false, last one was true. Add confidence and continue.
+                   triggerSecFilterTime++;
+                   revolutionOne = false;
+                 }
+                 else if (toothLastSecToothTime < toothLastMinusOneSecToothTime && revolutionOne == true){// Sec is true, last one was true. Which is wrong. Reduce confidence.
+                   if (triggerSecFilterTime > 0){// If confidence is above 0, we flip secondary. If it goes below 0, we do not so the primary and secondary revolutions are reversed.
+                      revolutionOne = false;   
+                      triggerSecFilterTime--;               
+                   }
+                   else{
+                     currentStatus.syncLossCounter = 100;// Confidense is 0 or below, set syncLossCouter to 100 so we have logging.
+                   }
+                 }
+                 else if (toothLastSecToothTime > toothLastMinusOneSecToothTime && revolutionOne == false){// Sec is false, last one was false. Which is wrong. Reduce confidence.
+                   if (triggerSecFilterTime > 0){// If confidence is above 0, we flip secondary. If it goes below 0, we do not so the primary and secondary revolutions are reversed.
+                      revolutionOne = true;    
+                      triggerSecFilterTime--;              
+                   }
+                   else{
+                     currentStatus.syncLossCounter = 100;// Confidense is 0 or below, set syncLossCouter to 100 so we have logging.
+                   }
+                 }                
+                 if  (triggerSecFilterTime == 20){
+                   currentStatus.syncLossCounter = 110;// Confidense is above 20, so we have full Sync, set syncLossCouter to 110 so we have logging.
+                 }
+                 if (triggerSecFilterTime == 1000){
+                   currentStatus.syncLossCounter = 120;// Routine is done (untill engine stops or we have sync loss, set syncLossCouter to 120 so we have logging.
+                 } 
+               }
               }
-            }
-            else{//Sync done, we just keep flipping.
-              revolutionOne = !revolutionOne; //Flip sequential revolution tracker
-            }
-            */
-             //FAKE CODE for all above, used for testing with ArduStim
+              else{//Sync done, we just keep flipping.
+               revolutionOne = !revolutionOne; //Flip sequential revolution tracker
+              }
+            #endif
+            #if defined(TESTMODE)///Used to fake the map2 signal when in testmode
              revolutionOne = !revolutionOne; //Flip sequential revolution tracker
              triggerSecFilterTime++;
-             //END FAKE CODE
+            #endif
                         
             toothLastMinusOneSecToothTime = toothLastSecToothTime; //Store the current MAP2 for next round. 
           }

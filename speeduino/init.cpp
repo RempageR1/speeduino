@@ -2263,7 +2263,7 @@ void setPinMapping(byte boardID)
       pinTPS = A3; //TPS input pin
       pinIAT = A0; //IAT sensor pin
       pinCLT = A1; //CLT sensor pin
-      pinO2 = A10; //O2 Sensor pin
+      pinO2 = A10; //O2 Sensor pin. A2 is internal, A10 is external
       pinO2_2 = A2; //editRempage, using external o2
       pinBat = A15; //Battery reference voltage pin. Needs Alpha4+
       pinFlex = A11;
@@ -2276,6 +2276,10 @@ void setPinMapping(byte boardID)
       pinTachOut = 4;
       pinTrigger = 20; //The CAS pin
       pinTrigger2 = 21; //The Cam Sensor pin
+      #if defined(TESTMODE)//editRempage, swapping CAM and CRANK signals since VR conditioner 1 has a C so cannot handle Ardustim anymore.
+        pinTrigger = 21; //The CAS pin
+        pinTrigger2 = 20; //The Cam Sensor pin
+      #endif
       //pinSpareTemp1 = A16; editRempage used for MAP2.
       pinSpareTemp2 = A17;
 
