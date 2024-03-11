@@ -51,15 +51,6 @@ static inline int _adjustToInjChannel(int angle, int channelInjDegrees) {
   return angle;
 }
 
-/*
-static inline uint32_t calculateInjectorTimeout(const FuelSchedule &schedule, int channelInjDegrees, int openAngle, int crankAngle)
-{
-  if (channelInjDegrees==0) {
-    return _calculateInjectorTimeout(schedule, openAngle, crankAngle);
-  }
-  return _calculateInjectorTimeout(schedule, _adjustToInjChannel(openAngle, channelInjDegrees), _adjustToInjChannel(crankAngle, channelInjDegrees));
-}
-*/
 static inline uint32_t calculateInjectorTimeout(const FuelSchedule &schedule, int channelInjDegrees, int openAngle, int crankAngle)
 {
   int16_t startAngle = (uint16_t)currentStatus.injAngle + (uint16_t)channelInjDegrees;
