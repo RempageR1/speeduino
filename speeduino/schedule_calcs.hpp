@@ -14,8 +14,7 @@ static inline uint16_t calculateInjectorStartAngle(uint16_t pwDegrees, int16_t i
   // 45<=CRANK_ANGLE_MAX_INJ<=720
   // (CRANK_ANGLE_MAX_INJ can be as small as 360/nCylinders. E.g. 45° for 8 cylinder)
 
-  ////int16_t startAngle = (uint16_t)injAngle + (uint16_t)injChannelDegrees; //editRempage temp
-  int16_t startAngle = (uint16_t)injChannelDegrees;//editRempage temp
+  int16_t startAngle = (uint16_t)injAngle + (uint16_t)injChannelDegrees;
   // Avoid underflow
   while (startAngle<pwDegrees) { startAngle = startAngle + (uint16_t)CRANK_ANGLE_MAX_INJ; }
   // Guarenteed to be >=0.
@@ -52,12 +51,25 @@ static inline int _adjustToInjChannel(int angle, int channelInjDegrees) {
   return angle;
 }
 
+/*
 static inline uint32_t calculateInjectorTimeout(const FuelSchedule &schedule, int channelInjDegrees, int openAngle, int crankAngle)
 {
   if (channelInjDegrees==0) {
     return _calculateInjectorTimeout(schedule, openAngle, crankAngle);
   }
   return _calculateInjectorTimeout(schedule, _adjustToInjChannel(openAngle, channelInjDegrees), _adjustToInjChannel(crankAngle, channelInjDegrees));
+}
+*/
+static inline uint32_t calculateInjectorTimeout(const FuelSchedule &schedule, int channelInjDegrees, int openAngle, int crankAngle)
+{
+  int16_t startAngle = (uint16_t)currentStatus.injAngle + (uint16_t)channelInjDegrees;
+  if (startAngle >= (uint16_t)CRANK_ANGLE_MAX_INJ ){
+    startAngle = startAngle - (uint16_t)CRANK_ANGLE_MAX_INJ;
+  }
+  if (startAngle==0) {
+    return _calculateInjectorTimeout(schedule, openAngle, crankAngle);
+  }
+  return _calculateInjectorTimeout(schedule, _adjustToInjChannel(openAngle, startAngle), _adjustToInjChannel(crankAngle, startAngle));
 }
 
 static inline void calculateIgnitionAngle(const int dwellAngle, const uint16_t channelIgnDegrees, int8_t advance, int *pEndAngle, int *pStartAngle)
