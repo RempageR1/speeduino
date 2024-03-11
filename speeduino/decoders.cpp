@@ -4808,12 +4808,14 @@ void triggerPri_Vmax(void)
         }
         else{//Wide lobe seen where it shouldn't, adding a sync error.
           currentStatus.syncLossCounter++;
+          triggerSecFilterTime = 0; //confidence score for cam to 0, since we don't know where we are.
         }
         toothCurrentCount = 1;
     }
     else if(toothCurrentCount == 6){//The 6th lobe should be wide, adding a sync error.
         toothCurrentCount = 1;
         currentStatus.syncLossCounter++;
+        triggerSecFilterTime = 0; //confidence score for cam to 0, since we don't know where we are.
     }
     else{// Small lobe, just add 1 to the toothCurrentCount.
       toothCurrentCount++;
