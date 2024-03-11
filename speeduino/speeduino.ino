@@ -485,6 +485,22 @@ void loop(void)
 
       unsigned int PWdivTimerPerDegree = timeToAngleDegPerMicroSec(currentStatus.PW1); //How many crank degrees the calculated PW will take at the current speed
 
+      //editRempage, test code for the injector timing
+      channel1InjDegrees = currentStatus.injAngle;
+      channel2InjDegrees = configPage2.oddfire2 + currentStatus.injAngle;
+      if (channel2InjDegrees >= (uint16_t)CRANK_ANGLE_MAX_INJ ){
+        channel2InjDegrees = channel2InjDegrees - (uint16_t)CRANK_ANGLE_MAX_INJ;
+      }
+      channel3InjDegrees = configPage2.oddfire3 + currentStatus.injAngle;
+      if (channel3InjDegrees >= (uint16_t)CRANK_ANGLE_MAX_INJ ){
+        channel3InjDegrees = channel3InjDegrees - (uint16_t)CRANK_ANGLE_MAX_INJ;
+      }
+      channel4InjDegrees = configPage2.oddfire4 + currentStatus.injAngle;
+      if (channel4InjDegrees >= (uint16_t)CRANK_ANGLE_MAX_INJ ){
+        channel4InjDegrees = channel4InjDegrees - (uint16_t)CRANK_ANGLE_MAX_INJ;
+      }
+      
+
       injector1StartAngle = calculateInjectorStartAngle(PWdivTimerPerDegree, channel1InjDegrees, currentStatus.injAngle);
 
       //Repeat the above for each cylinder
