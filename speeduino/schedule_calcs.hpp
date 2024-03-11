@@ -14,7 +14,7 @@ static inline uint16_t calculateInjectorStartAngle(uint16_t pwDegrees, int16_t i
   // 45<=CRANK_ANGLE_MAX_INJ<=720
   // (CRANK_ANGLE_MAX_INJ can be as small as 360/nCylinders. E.g. 45° for 8 cylinder)
 
-  int16_t startAngle = (uint16_t)injAngle + (uint16_t)injChannelDegrees;
+  uint16_t startAngle = (uint16_t)injAngle + (uint16_t)injChannelDegrees;
   // Avoid underflow
   while (startAngle<pwDegrees) { startAngle = startAngle + (uint16_t)CRANK_ANGLE_MAX_INJ; }
   // Guarenteed to be >=0.
