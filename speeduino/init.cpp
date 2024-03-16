@@ -1554,7 +1554,7 @@ void setPinMapping(byte boardID)
 
         pinTrigger = 20; //The CAS pin
         pinTrigger2 = 21; //The Cam Sensor pin
-        pinTrigger3 = 23;
+        pinTrigger3 = 24;
 
         pinStepperDir = 34;
         pinStepperStep = 35;
