@@ -615,6 +615,7 @@ void readO2(void)
     currentStatus.O2ADC = ADC_FILTER(tempReading, configPage4.ADCFILTER_O2, currentStatus.O2ADC);
     //currentStatus.O2 = o2CalibrationTable[currentStatus.O2ADC];
     currentStatus.O2 = table2D_getValue(&o2CalibrationTable, currentStatus.O2ADC);
+    ////currentStatus.O2 = (10.44+(currentStatus.O2ADC*0.00626))*10;//editRempage, custom O2 calibration
   }
   else
   {
@@ -637,7 +638,8 @@ void readO2_2(void)
     //tempReading = fastMap1023toX(analogRead(pinO2_2), 511); //Get the current O2 value.
   #endif
   currentStatus.O2_2ADC = ADC_FILTER(tempReading, configPage4.ADCFILTER_O2, currentStatus.O2_2ADC);
-  currentStatus.O2_2 = table2D_getValue(&o2CalibrationTable, currentStatus.O2_2ADC);
+  //currentStatus.O2_2 = table2D_getValue(&o2CalibrationTable, currentStatus.O2_2ADC);
+  currentStatus.O2_2 = (5.49+(currentStatus.O2_2ADC*0.01693))*10;//editRempage, custom O2 calibration
 }
 
 void readBat(void)

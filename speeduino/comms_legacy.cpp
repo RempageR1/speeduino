@@ -746,7 +746,7 @@ void sendValuesLegacy(void)
 {
   uint16_t temp;
   int bytestosend = 114;
-
+  
   bytestosend -= Serial.write(currentStatus.secl>>8);
   bytestosend -= Serial.write(currentStatus.secl);
   bytestosend -= Serial.write(currentStatus.PW1>>8);
@@ -767,7 +767,8 @@ void sendValuesLegacy(void)
   bytestosend -= Serial.write(99); // send dummy data as we don't have wbo2_en1
   bytestosend -= Serial.write(99); // send dummy data as we don't have wbo2_en2
 
-  temp = currentStatus.baro * 10;
+  //temp = currentStatus.baro * 10;
+  temp = currentStatus.syncLossCounter * 10; //editRempage: Hacked baro so I get syncLoss in RealDash
   bytestosend -= Serial.write(temp>>8);
   bytestosend -= Serial.write(temp);
 

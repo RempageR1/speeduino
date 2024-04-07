@@ -4729,12 +4729,21 @@ void triggerPri_Vmax(void)
                    else{
                      currentStatus.syncLossCounter = 100;// Confidense is 0 or below, set syncLossCouter to 100 so we have logging.
                    }
-                 }                
+                 }  
+                if  (triggerSecFilterTime == 10){
+                   currentStatus.syncLossCounter = 105;// temp
+                 }            
                  if  (triggerSecFilterTime == 20){
                    currentStatus.syncLossCounter = 110;// Confidense is above 20, so we have full Sync, set syncLossCouter to 110 so we have logging.
                  }
+                 if (triggerSecFilterTime == 100){
+                   currentStatus.syncLossCounter = 115;// temp
+                 }   
+                 if (triggerSecFilterTime == 500){
+                   currentStatus.syncLossCounter = 120;// temp
+                 } 
                  if (triggerSecFilterTime == 1000){
-                   currentStatus.syncLossCounter = 120;// Routine is done (untill engine stops or we have sync loss, set syncLossCouter to 120 so we have logging.
+                   currentStatus.syncLossCounter = 125;// Routine is done (untill engine stops or we have sync loss, set syncLossCouter to 120 so we have logging.
                  } 
                }
               }
