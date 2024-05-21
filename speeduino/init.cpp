@@ -114,7 +114,7 @@ void initialiseAll(void)
     
   #ifdef SD_LOGGING
     initRTC();
-    //initSD(); editRempage: SD is not used and init takes 2 seconds of boot time.
+    //initSD(); //editRempage: SD is not used and init takes 2 seconds of boot time.
   #endif
 
     Serial.begin(115200);
