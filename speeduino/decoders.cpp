@@ -4718,7 +4718,7 @@ void triggerPri_Vmax(void)
                       triggerSecFilterTime--;               
                    }
                    else{
-                     currentStatus.syncLossCounter = 100;// Confidense is 0 or below, set syncLossCouter to 100 so we have logging.
+                     currentStatus.syncLossCounter = 50;// Confidense is 0 or below, set syncLossCouter to 50 so we have logging.
                    }
                  }
                  else if (toothLastSecToothTime > toothLastMinusOneSecToothTime && revolutionOne == false){// Sec is false, last one was false. Which is wrong. Reduce confidence.
@@ -4727,11 +4727,11 @@ void triggerPri_Vmax(void)
                       triggerSecFilterTime--;              
                    }
                    else{
-                     currentStatus.syncLossCounter = 100;// Confidense is 0 or below, set syncLossCouter to 100 so we have logging.
+                     currentStatus.syncLossCounter = 50;// Confidense is 0 or below, set syncLossCouter to 50 so we have logging.
                    }
                  }  
                  if (triggerSecFilterTime == 1000){
-                   currentStatus.syncLossCounter = 125;// Routine is done (untill engine stops or we have sync loss, set syncLossCouter to 120 so we have logging.
+                   currentStatus.syncLossCounter = 100;// Routine is done (untill engine stops or we have sync loss, set syncLossCouter to 100 so we have logging.
                  } 
                }
               }
@@ -4804,19 +4804,20 @@ void triggerPri_Vmax(void)
         currentStatus.hasSync = true;
       }
       else{//Wide lobe seen where it shouldn't, adding a sync error.
-        //currentStatus.syncLossCounter++;//editRemco
-        currentStatus.syncLossCounter=currentStatus.syncLossCounter+10; //editRemco
+        //currentStatus.syncLossCounter++;
+        currentStatus.syncLossCounter=currentStatus.syncLossCounter+10; //editRempage: Adding 10 so I can see this in log.
         triggerSecFilterTime = 0; //confidence score for cam to 0, since we don't know where we are.
       }
       toothCurrentCount = 1;
     }
-    else if(toothCurrentCount == 6){//The 6th lobe should be wide, adding a sync error.
+    else if(toothCurrentCount == 6){//Small lobe seen whilst it should be wide. First checking if we can fix it. If not, error.
       if (curGapLocal < 10){//Lobe width was too small. Fix for this issue.
+        currentStatus.syncLossCounter++;
         curGapLocal = lastGap * 4;//Since this is pulse 6, curGapLocal should be wide. Using the last known good one and making it 4 times longer.
       }
-      else{
-        //currentStatus.syncLossCounter++;//editRemco
-        currentStatus.syncLossCounter=currentStatus.syncLossCounter+15; //editRemco
+      else{//The 6th lobe should be wide, adding a sync error.
+        //currentStatus.syncLossCounter++;
+        currentStatus.syncLossCounter=currentStatus.syncLossCounter+15; //editRempage: Adding 15 so I can see this in log.
         triggerSecFilterTime = 0; //confidence score for cam to 0, since we don't know where we are.
       }
       toothCurrentCount = 1;
