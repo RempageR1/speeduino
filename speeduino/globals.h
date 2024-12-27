@@ -30,6 +30,8 @@
 #include "table3d.h"
 #include "src/FastCRC/FastCRC.h"
 
+//#define TESTMODE //editRempage adding TESTMODE to switch VE conditioner inputs and fake MAP2
+
 #if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega2561__)
   #define BOARD_MAX_DIGITAL_PINS 54 //digital pins +1
   #define BOARD_MAX_IO_PINS 70 //digital pins + analog channels + 1
@@ -68,6 +70,7 @@
   #elif defined(__IMXRT1062__)
     #define CORE_TEENSY41
     #define BOARD_H "board_teensy41.h"
+	#define Serial Serial2//editRempage: define serial to Wifi/BT
   #endif
   #define INJ_CHANNELS 8
   #define IGN_CHANNELS 8
@@ -588,6 +591,7 @@ struct statuses {
   long longRPM;   ///< RPM as long int (gets assigned to / maintained in statuses.RPM as well)
   uint16_t baroADC;
   long MAP;     ///< Manifold absolute pressure. Has to be a long for PID calcs (Boost control)
+  long MAP2;     ///< Manifold absolute pressure. //editRempage used to get the map2 used for sequential.
   int16_t EMAP; ///< EMAP ... (See @ref config6.useEMAP for EMAP enablement)
   uint8_t baro;   ///< Barometric pressure is simply the initial MAP reading, taken before the engine is running. Alternatively, can be taken from an external sensor
   uint8_t TPS;    /**< The current TPS reading (0% - 100%). Is the tpsADC value after the calibration is applied */

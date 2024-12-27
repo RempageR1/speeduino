@@ -768,123 +768,128 @@ void sendValuesLegacy(void)
   uint16_t temp;
   int bytestosend = 114;
 
-  bytestosend -= primarySerial.write(currentStatus.secl>>8);
-  bytestosend -= primarySerial.write(currentStatus.secl);
-  bytestosend -= primarySerial.write(currentStatus.PW1>>8);
-  bytestosend -= primarySerial.write(currentStatus.PW1);
-  bytestosend -= primarySerial.write(currentStatus.PW2>>8);
-  bytestosend -= primarySerial.write(currentStatus.PW2);
-  bytestosend -= primarySerial.write(currentStatus.RPM>>8);
-  bytestosend -= primarySerial.write(currentStatus.RPM);
+  bytestosend -= Serial.write(currentStatus.secl>>8);
+  bytestosend -= Serial.write(currentStatus.secl);
+  bytestosend -= Serial.write(currentStatus.PW1>>8);
+  bytestosend -= Serial.write(currentStatus.PW1);
+  bytestosend -= Serial.write(currentStatus.PW2>>8);
+  bytestosend -= Serial.write(currentStatus.PW2);
+  bytestosend -= Serial.write(currentStatus.RPM>>8);
+  bytestosend -= Serial.write(currentStatus.RPM);
 
   temp = currentStatus.advance * 10;
-  bytestosend -= primarySerial.write(temp>>8);
-  bytestosend -= primarySerial.write(temp);
+  bytestosend -= Serial.write(temp>>8);
+  bytestosend -= Serial.write(temp);
 
-  bytestosend -= primarySerial.write(currentStatus.nSquirts);
-  bytestosend -= primarySerial.write(currentStatus.engine);
-  bytestosend -= primarySerial.write(currentStatus.afrTarget);
-  bytestosend -= primarySerial.write(currentStatus.afrTarget); // send twice so afrtgt1 == afrtgt2
-  bytestosend -= primarySerial.write(99); // send dummy data as we don't have wbo2_en1
-  bytestosend -= primarySerial.write(99); // send dummy data as we don't have wbo2_en2
+  bytestosend -= Serial.write(currentStatus.nSquirts);
+  bytestosend -= Serial.write(currentStatus.engine);
+  bytestosend -= Serial.write(currentStatus.afrTarget);
+  bytestosend -= Serial.write(currentStatus.afrTarget); // send twice so afrtgt1 == afrtgt2
+  bytestosend -= Serial.write(99); // send dummy data as we don't have wbo2_en1
+  bytestosend -= Serial.write(99); // send dummy data as we don't have wbo2_en2
 
-  temp = currentStatus.baro * 10;
-  bytestosend -= primarySerial.write(temp>>8);
-  bytestosend -= primarySerial.write(temp);
+  //temp = currentStatus.baro * 10;
+  temp = currentStatus.syncLossCounter * 10; //editRempage: Hacked baro so I get syncLoss in RealDash
+  //temp = currentStatus.EMAP * 10; //editRempage: EMAP option to compare MAP modifications to EMAP
+  bytestosend -= Serial.write(temp>>8);
+  bytestosend -= Serial.write(temp);
 
   temp = currentStatus.MAP * 10;
-  bytestosend -= primarySerial.write(temp>>8);
-  bytestosend -= primarySerial.write(temp);
+  bytestosend -= Serial.write(temp>>8);
+  bytestosend -= Serial.write(temp);
 
-  temp = currentStatus.IAT * 10;
-  bytestosend -= primarySerial.write(temp>>8);
-  bytestosend -= primarySerial.write(temp);
+  //temp = currentStatus.IAT * 10;
+  temp = (currentStatus.IAT+20) * 17; //editRempage: Fix IAT for RealDash
+  bytestosend -= Serial.write(temp>>8);
+  bytestosend -= Serial.write(temp);
 
-  temp = currentStatus.coolant * 10;
-  bytestosend -= primarySerial.write(temp>>8);
-  bytestosend -= primarySerial.write(temp);
+  //temp = currentStatus.coolant * 10;
+  temp = (currentStatus.coolant+20) * 17; //editRempage: Fix Coolant for RealDash
+  bytestosend -= Serial.write(temp>>8);
+  bytestosend -= Serial.write(temp);
 
-  temp = currentStatus.TPS * 10;
-  bytestosend -= primarySerial.write(temp>>8);
-  bytestosend -= primarySerial.write(temp);
+  temp = currentStatus.TPS * 5;//editRempage this is how to fix TPS in RealDash
+  bytestosend -= Serial.write(temp>>8);
+  bytestosend -= Serial.write(temp);
 
-  bytestosend -= primarySerial.write(currentStatus.battery10>>8);
-  bytestosend -= primarySerial.write(currentStatus.battery10);
-  bytestosend -= primarySerial.write(currentStatus.O2>>8);
-  bytestosend -= primarySerial.write(currentStatus.O2);
-  bytestosend -= primarySerial.write(currentStatus.O2_2>>8);
-  bytestosend -= primarySerial.write(currentStatus.O2_2);
+  bytestosend -= Serial.write(currentStatus.battery10>>8);
+  bytestosend -= Serial.write(currentStatus.battery10);
+  bytestosend -= Serial.write(currentStatus.O2>>8);
+  bytestosend -= Serial.write(currentStatus.O2);
+  bytestosend -= Serial.write(currentStatus.O2_2>>8);
+  bytestosend -= Serial.write(currentStatus.O2_2);
 
-  bytestosend -= primarySerial.write(99); // knock
-  bytestosend -= primarySerial.write(99); // knock
+  bytestosend -= Serial.write(99); // knock
+  bytestosend -= Serial.write(99); // knock
 
   temp = currentStatus.egoCorrection * 10;
-  bytestosend -= primarySerial.write(temp>>8); // egocor1
-  bytestosend -= primarySerial.write(temp); // egocor1
-  bytestosend -= primarySerial.write(temp>>8); // egocor2
-  bytestosend -= primarySerial.write(temp); // egocor2
+  bytestosend -= Serial.write(temp>>8); // egocor1
+  bytestosend -= Serial.write(temp); // egocor1
+  bytestosend -= Serial.write(temp>>8); // egocor2
+  bytestosend -= Serial.write(temp); // egocor2
 
   temp = currentStatus.iatCorrection * 10;
-  bytestosend -= primarySerial.write(temp>>8); // aircor
-  bytestosend -= primarySerial.write(temp); // aircor
+  bytestosend -= Serial.write(temp>>8); // aircor
+  bytestosend -= Serial.write(temp); // aircor
 
   temp = currentStatus.wueCorrection * 10;
-  bytestosend -= primarySerial.write(temp>>8); // warmcor
-  bytestosend -= primarySerial.write(temp); // warmcor
+  bytestosend -= Serial.write(temp>>8); // warmcor
+  bytestosend -= Serial.write(temp); // warmcor
 
-  bytestosend -= primarySerial.write(99); // accelEnrich
-  bytestosend -= primarySerial.write(99); // accelEnrich
-  bytestosend -= primarySerial.write(99); // tpsFuelCut
-  bytestosend -= primarySerial.write(99); // tpsFuelCut
-  bytestosend -= primarySerial.write(99); // baroCorrection
-  bytestosend -= primarySerial.write(99); // baroCorrection
+  temp = currentStatus.AEamount * 10;
+  bytestosend -= Serial.write(temp>>8); // accelEnrich
+  bytestosend -= Serial.write(temp); // accelEnrich
+  bytestosend -= Serial.write(99); // tpsFuelCut
+  bytestosend -= Serial.write(99); // tpsFuelCut
+  bytestosend -= Serial.write(99); // baroCorrection
+  bytestosend -= Serial.write(99); // baroCorrection
 
   temp = currentStatus.corrections * 10;
-  bytestosend -= primarySerial.write(temp>>8); // gammaEnrich
-  bytestosend -= primarySerial.write(temp); // gammaEnrich
+  bytestosend -= Serial.write(temp>>8); // gammaEnrich
+  bytestosend -= Serial.write(temp); // gammaEnrich
 
   temp = currentStatus.VE * 10;
-  bytestosend -= primarySerial.write(temp>>8); // ve1
-  bytestosend -= primarySerial.write(temp); // ve1
+  bytestosend -= Serial.write(temp>>8); // ve1
+  bytestosend -= Serial.write(temp); // ve1
   temp = currentStatus.VE2 * 10;
-  bytestosend -= primarySerial.write(temp>>8); // ve2
-  bytestosend -= primarySerial.write(temp); // ve2
+  bytestosend -= Serial.write(temp>>8); // ve2
+  bytestosend -= Serial.write(temp); // ve2
 
-  bytestosend -= primarySerial.write(99); // iacstep
-  bytestosend -= primarySerial.write(99); // iacstep
-  bytestosend -= primarySerial.write(99); // cold_adv_deg
-  bytestosend -= primarySerial.write(99); // cold_adv_deg
+  bytestosend -= Serial.write(99); // iacstep
+  bytestosend -= Serial.write(99); // iacstep
+  bytestosend -= Serial.write(99); // cold_adv_deg
+  bytestosend -= Serial.write(99); // cold_adv_deg
 
-  temp = currentStatus.tpsDOT;
-  bytestosend -= primarySerial.write(temp>>8); // TPSdot
-  bytestosend -= primarySerial.write(temp); // TPSdot
+  temp = currentStatus.tpsDOT * 10; //editRempage, times 10 to fix Realdash
+  bytestosend -= Serial.write(temp>>8); // TPSdot
+  bytestosend -= Serial.write(temp); // TPSdot
 
   temp = currentStatus.mapDOT;
-  bytestosend -= primarySerial.write(temp >> 8); // MAPdot
-  bytestosend -= primarySerial.write(temp); // MAPdot
+  bytestosend -= Serial.write(temp >> 8); // MAPdot
+  bytestosend -= Serial.write(temp); // MAPdot
 
-  temp = currentStatus.dwell * 10U;
-  bytestosend -= primarySerial.write(temp>>8); // dwell
-  bytestosend -= primarySerial.write(temp); // dwell
+  temp = currentStatus.dwell * 10;
+  bytestosend -= Serial.write(temp>>8); // dwell
+  bytestosend -= Serial.write(temp); // dwell
 
-  bytestosend -= primarySerial.write(99); // MAF
-  bytestosend -= primarySerial.write(99); // MAF
-  bytestosend -= primarySerial.write(currentStatus.fuelLoad*10); // fuelload
-  bytestosend -= primarySerial.write(99); // fuelcor
-  bytestosend -= primarySerial.write(99); // fuelcor
-  bytestosend -= primarySerial.write(99); // portStatus
+  bytestosend -= Serial.write(99); // MAF
+  bytestosend -= Serial.write(99); // MAF
+  bytestosend -= Serial.write(currentStatus.fuelLoad*10); // fuelload
+  bytestosend -= Serial.write(99); // fuelcor
+  bytestosend -= Serial.write(99); // fuelcor
+  bytestosend -= Serial.write(99); // portStatus
 
   temp = currentStatus.advance1 * 10;
-  bytestosend -= primarySerial.write(temp>>8);
-  bytestosend -= primarySerial.write(temp);
+  bytestosend -= Serial.write(temp>>8);
+  bytestosend -= Serial.write(temp);
   temp = currentStatus.advance2 * 10;
-  bytestosend -= primarySerial.write(temp>>8);
-  bytestosend -= primarySerial.write(temp);
+  bytestosend -= Serial.write(temp>>8);
+  bytestosend -= Serial.write(temp);
 
   for(int i = 0; i < bytestosend; i++)
   {
     // send dummy data to fill remote's buffer
-    primarySerial.write(99);
+    Serial.write(99);
   }
 }
 
