@@ -159,7 +159,7 @@ void initialiseAll(void)
     
   #ifdef SD_LOGGING
     initRTC();
-    if(configPage13.onboard_log_file_style) { initSD(); }
+    if(configPage13.onboard_log_file_style) { initSD(); }//editRempage: Might needs to be deactivated to speedup boot.
   #endif
 
 //Teensy 4.1 does not require .begin() to be called. This introduces a 700ms delay on startup time whilst USB is enumerated if it is called
@@ -587,9 +587,14 @@ void initialiseAll(void)
         }
         else if (configPage2.injLayout == INJ_SEQUENTIAL)
         {
-          channel2InjDegrees = 180;
-          channel3InjDegrees = 360;
-          channel4InjDegrees = 540;
+		  //editRempage, angles changed so I can do oddsquirt.
+          //channel2InjDegrees = 180;
+          //channel3InjDegrees = 360; 
+          //channel4InjDegrees = 540; 
+         
+          channel2InjDegrees = configPage2.oddfire2; // editRempage, changed from 180;
+          channel3InjDegrees = configPage2.oddfire3; // editRempage, changed from 360;
+          channel4InjDegrees = configPage2.oddfire4; // editRempage, changed from 540;
 
           maxInjOutputs = 4;
 
@@ -1240,6 +1245,9 @@ void initialiseAll(void)
     interrupts();
     readCLT(false); // Need to read coolant temp to make priming pulsewidth work correctly. The false here disables use of the filter
     readTPS(false); // Need to read tps to detect flood clear state
+	
+	Serial.begin(115200);//editRempage: Start serial again, needed for Teensy
+    secondarySerial.begin(115200);//editRempage: Start serial again, needed for Teensy
 
     /* tacho sweep function. */
     currentStatus.tachoSweepEnabled = (configPage2.useTachoSweep > 0);
@@ -2060,6 +2068,76 @@ void setPinMapping(byte boardID)
       pinResetControl = 46; //Reset control output PLACEHOLDER value for now
     #endif
       break;
+
+	case 43://editRempage: Added GasDuino
+      //Pin mappings for all GasDuino
+      injectorOutputControl = OUTPUT_CONTROL_MC33810;
+      ignitionOutputControl = OUTPUT_CONTROL_MC33810;
+      pinMC33810_1_CS = 9;
+      pinMC33810_2_CS = 10;
+      //Pin alignment to the MC33810 outputs
+      MC33810_BIT_INJ1 = 3;
+      MC33810_BIT_INJ2 = 1;
+      MC33810_BIT_INJ3 = 0;
+      MC33810_BIT_INJ4 = 2;
+      MC33810_BIT_IGN1 = 4;
+      MC33810_BIT_IGN2 = 5;
+      MC33810_BIT_IGN3 = 6;
+      MC33810_BIT_IGN4 = 7;
+
+      MC33810_BIT_INJ5 = 3;
+      MC33810_BIT_INJ6 = 1;
+      MC33810_BIT_INJ7 = 0;
+      MC33810_BIT_INJ8 = 2;
+      // MC33810_BIT_IGN5 = 4;
+      // MC33810_BIT_IGN6 = 5;
+      // MC33810_BIT_IGN7 = 6;
+      // MC33810_BIT_IGN8 = 7;
+
+      //The injector pins below are not used directly as the control is via SPI through the MC33810s, however the pin numbers are set to be the SPI pins (SCLK, MOSI, MISO and CS) so that nothing else will set them as inputs
+      pinInjector1 = 13; //SCLK
+      pinInjector2 = 11; //MOSI
+      pinInjector3 = 12; //MISO
+      pinInjector4 = 10; //CS for MC33810 1
+      pinInjector5 = 9; //CS for MC33810 2
+      pinInjector6 = 9; //CS for MC33810 3
+
+      //Dummy pins, without thes pin 0 (Serial1 RX) gets overwritten
+      pinCoil1 = 40;
+      pinCoil2 = 41;
+
+      //Pin mapping for Gasduino
+      pinBaro = A4; 
+      pinMAP = A5;
+      pinTPS = A3; //TPS input pin
+      pinIAT = A0; //IAT sensor pin
+      pinCLT = A1; //CLT sensor pin
+      pinO2 = A10; //O2 Sensor pin. A2 is internal, A10 is external
+      pinO2_2 = A2; //editRempage, using external o2
+      pinBat = A15; //Battery reference voltage pin. Needs Alpha4+
+      pinFlex = A11;
+      pinLaunch = 26;
+      pinIdle1 = 29;
+      pinFuelPump = 30;
+      pinVVT_1 = 31;
+      pinBoost = 27;
+      pinFan = 28;
+      pinTachOut = 4;
+      pinTrigger = 20; //The CAS pin
+      pinTrigger2 = 21; //The Cam Sensor pin
+      #if defined(TESTMODE)//editRempage, swapping CAM and CRANK signals since VR conditioner 1 has a C so cannot handle Ardustim anymore.
+        pinTrigger = 21; //The CAS pin
+        pinTrigger2 = 20; //The Cam Sensor pin
+      #endif
+      #if defined(CORE_TEENSY41)
+        pinMAP2 = A16; //editRempage, using oil pressure pin for Map2
+      #endif
+      //pinSpareTemp1 = A16; editRempage used for MAP2.
+      //pinSpareTemp2 = A17;
+
+      pinResetControl = 49; //PLaceholder only. Cannot use 42-47 as these are the SD card
+      pSecondarySerial = &Serial2;//editRempage, try to get serial2 going.
+    break;
 
     case 42:
       //Pin mappings for all BlitzboxBL49sp variants

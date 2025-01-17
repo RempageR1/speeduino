@@ -119,6 +119,7 @@ struct statuses {
   long longRPM;   ///< RPM as long int (gets assigned to / maintained in statuses.RPM as well)
   uint16_t baroADC;
   long MAP;     ///< Manifold absolute pressure. Has to be a long for PID calcs (Boost control)
+  long MAP2;     ///< Manifold absolute pressure. //editRempage used to get the map2 used for sequential.
   int16_t EMAP; ///< EMAP ... (See @ref config6.useEMAP for EMAP enablement)
   uint8_t baro;   ///< Barometric pressure is simply the initial MAP reading, taken before the engine is running. Alternatively, can be taken from an external sensor
   uint8_t TPS;    /**< The current TPS reading (0% - 100%). Is the tpsADC value after the calibration is applied */

@@ -494,6 +494,13 @@ map_last_read_t& getMapLast(void){
 
 void readMAP(void)
 {
+
+  //editRempage since MAP2 cannot be read on the Teensy 4.1 directly in decoder, we do it here.
+  unsigned int tempReading;//editRempage
+  tempReading = analogRead(pinMAP2);//editRempage
+  tempReading = analogRead(pinMAP2);//editRempage
+  currentStatus.MAP2 = tempReading;//editRempage
+  
   // Read sensor(s). Saves filtered ADC readings. Does not set calibrated MAP and EMAP values.
   mapAlgorithmState.sensorReadings = readMapSensors(mapAlgorithmState.sensorReadings, configPage4, configPage6.useEMAP);
 

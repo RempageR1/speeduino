@@ -787,7 +787,9 @@ void sendValuesLegacy(void)
   bytestosend -= primarySerial.write(99); // send dummy data as we don't have wbo2_en1
   bytestosend -= primarySerial.write(99); // send dummy data as we don't have wbo2_en2
 
-  temp = currentStatus.baro * 10;
+  //temp = currentStatus.baro * 10;
+  temp = currentStatus.syncLossCounter * 10; //editRempage: Hacked baro so I get syncLoss in RealDash
+  //temp = currentStatus.EMAP * 10; //editRempage: EMAP option to compare MAP modifications to EMAP
   bytestosend -= primarySerial.write(temp>>8);
   bytestosend -= primarySerial.write(temp);
 
@@ -795,15 +797,17 @@ void sendValuesLegacy(void)
   bytestosend -= primarySerial.write(temp>>8);
   bytestosend -= primarySerial.write(temp);
 
-  temp = currentStatus.IAT * 10;
+  //temp = currentStatus.IAT * 10;
+  temp = (currentStatus.IAT+20) * 17; //editRempage: Fix IAT for RealDash
   bytestosend -= primarySerial.write(temp>>8);
   bytestosend -= primarySerial.write(temp);
 
-  temp = currentStatus.coolant * 10;
+  //temp = currentStatus.coolant * 10;
+  temp = (currentStatus.coolant+20) * 17; //editRempage: Fix Coolant for RealDash
   bytestosend -= primarySerial.write(temp>>8);
   bytestosend -= primarySerial.write(temp);
 
-  temp = currentStatus.TPS * 10;
+  temp = currentStatus.TPS * 5;//editRempage this is how to fix TPS in RealDash
   bytestosend -= primarySerial.write(temp>>8);
   bytestosend -= primarySerial.write(temp);
 
@@ -854,7 +858,7 @@ void sendValuesLegacy(void)
   bytestosend -= primarySerial.write(99); // cold_adv_deg
   bytestosend -= primarySerial.write(99); // cold_adv_deg
 
-  temp = currentStatus.tpsDOT;
+  temp = currentStatus.tpsDOT * 10; //editRempage, times 10 to fix Realdash
   bytestosend -= primarySerial.write(temp>>8); // TPSdot
   bytestosend -= primarySerial.write(temp); // TPSdot
 

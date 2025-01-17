@@ -31,6 +31,8 @@
 #include "statuses.h"
 #include "config_pages.h"
 
+//#define TESTMODE //editRempage adding TESTMODE to switch VE conditioner inputs and fake MAP2
+
 #if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega2561__)
   #define BOARD_MAX_DIGITAL_PINS 54 //digital pins +1
   #define BOARD_MAX_IO_PINS 70 //digital pins + analog channels + 1
@@ -69,6 +71,9 @@
   #elif defined(__IMXRT1062__)
     #define CORE_TEENSY41
     #define BOARD_H "board_teensy41.h"
+    #if not defined(TESTMODE)
+	    #define Serial Serial2//editRempage: define serial to Wifi/BT
+    #endif  
   #endif
   #define INJ_CHANNELS 8
   #define IGN_CHANNELS 8
