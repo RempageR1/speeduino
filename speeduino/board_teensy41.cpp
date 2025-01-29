@@ -324,6 +324,12 @@ void setTriggerHysteresis()
   *(p->reg + 1) &= ~(p->mask); // TODO: atomic
   *(p->pad) = padConfig;
   *(p->mux) = 5 | 0x10;
+
+  //Flex trigger
+  p = digital_pin_to_info_PGM + pinFlex;
+  *(p->reg + 1) &= ~(p->mask); // TODO: atomic
+  *(p->pad) = padConfig;
+  *(p->mux) = 5 | 0x10;
 }
 
 /*

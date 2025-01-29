@@ -23,7 +23,6 @@ A full copy of the license may be found in the projects root directory
 #include "sensors_map_structs.h"
 
 bool auxIsEnabled;
-bool lastFlex = false;//editRempage added check to store what the last flex readout was. Needed since my Flex signal is noisy.
 
 static volatile uint32_t vssTimes[VSS_SAMPLES] = {0};
 static volatile uint8_t vssIndex = 0U;
@@ -879,21 +878,13 @@ void flexPulse(void)
 {
   if(READ_FLEX() == true)
   {
-    if (lastFlex == false){//editRempage: Added check to see if the previous was low. If not, this is a false (noisy) reading and we ignore it.
-      if ((micros() - flexStartTime) > 1000){//editRempage: Added check to filter out pulses that are too quickly (noise)
-        uint16_t tempPW = clamp(micros() - flexStartTime, 0UL, (unsigned long)UINT16_MAX); //Calculate the pulse width
-        flexPulseWidth = LOW_PASS_FILTER(tempPW, configPage4.FILTER_FLEX, flexPulseWidth);
-        ++flexCounter;
-      }
-      lastFlex = true;//editRempage: Store last reading.
-    }
+    uint16_t tempPW = clamp(micros() - flexStartTime, 0UL, (unsigned long)UINT16_MAX); //Calculate the pulse width
+    flexPulseWidth = LOW_PASS_FILTER(tempPW, configPage4.FILTER_FLEX, flexPulseWidth);
+    ++flexCounter;
   }
   else
   {
-    if (lastFlex == true){//editRempage: Added check to see if the previous was high. If not, this is a false (noisy) reading and we ignore it.
-      flexStartTime = micros(); //Start pulse width measurement.
-      lastFlex = false;//editRempage: Store last reading.
-    } 
+    flexStartTime = micros(); //Start pulse width measurement.
   }
 }
 
