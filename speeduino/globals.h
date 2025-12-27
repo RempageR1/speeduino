@@ -31,6 +31,8 @@
 #include "port_pin.h"
 #include "atomic.h"
 
+//#define TESTMODE //editRempage adding TESTMODE to switch VE conditioner inputs
+
 #define CRANK_ANGLE_MAX (max(CRANK_ANGLE_MAX_IGN, CRANK_ANGLE_MAX_INJ))
 
 #define MICROS_PER_SEC INT32_C(1000000)

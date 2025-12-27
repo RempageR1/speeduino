@@ -46,6 +46,9 @@ uint8_t getSystemTemp(void);
     #include "board_teensy35.h"
   #elif defined(__IMXRT1062__)
     #include "board_teensy41.h"
+    #if not defined(TESTMODE)
+	    #define Serial Serial2//editRempage: define serial to Wifi/BT
+    #endif 
   #endif
 #elif defined(STM32_MCU_SERIES) || defined(ARDUINO_ARCH_STM32) || defined(STM32)
   #include "board_stm32_official.h"

@@ -191,7 +191,11 @@ byte getTSLogEntry(uint16_t byteNum)
     case 7: statusValue = temperatureAddOffset(currentStatus.coolant); break; //Coolant ADC
     case 8: statusValue = currentStatus.batCorrection; break; //Battery voltage correction (%)
     case 9: statusValue = currentStatus.battery10; break; //battery voltage
-    case 10: statusValue = currentStatus.O2; break; //O2
+    //case 10: statusValue = currentStatus.O2; break; //O2
+    case 10: statusValue = currentStatus.O2;//editRempage, max and min values so Autotune will work.
+      if (statusValue > 173){statusValue=173;}
+      else if (currentStatus.O2 < 105){statusValue=105;}
+      break; //O2
     case 11: statusValue = currentStatus.egoCorrection; break; //Exhaust gas correction (%)
     case 12: statusValue = currentStatus.iatCorrection; break; //Air temperature Correction (%)
     case 13: statusValue = currentStatus.wueCorrection; break; //Warmup enrichment (%)

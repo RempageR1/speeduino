@@ -794,23 +794,40 @@ void sendValuesLegacy(void)
   bytestosend -= primarySerial.write(99); // send dummy data as we don't have wbo2_en1
   bytestosend -= primarySerial.write(99); // send dummy data as we don't have wbo2_en2
 
-  temp = currentStatus.baro * 10;
+  //temp = currentStatus.baro * 10;
+  temp = currentStatus.syncLossCounter * 10; //editRempage: Hacked baro so I get syncLoss in RealDash
+  //temp = currentStatus.EMAP * 10; //editRempage: EMAP option to compare MAP modifications to EMAP
   bytestosend -= primarySerial.write(temp>>8);
   bytestosend -= primarySerial.write(temp);
+
 
   temp = currentStatus.MAP * 10;
   bytestosend -= primarySerial.write(temp>>8);
   bytestosend -= primarySerial.write(temp);
 
-  temp = currentStatus.IAT * 10;
+  //temp = currentStatus.IAT * 10;
+  temp = currentStatus.IAT;//editRempage: Fix IAT for RealDash
+  if (temp > 90){ temp += 4;}
+  else if (temp > 70){ temp += 3;}
+  else if (temp > 50){ temp += 2;}
+  else if (temp > 30){ temp += 1;}
+  temp=(temp+20) * 17;
   bytestosend -= primarySerial.write(temp>>8);
   bytestosend -= primarySerial.write(temp);
 
-  temp = currentStatus.coolant * 10;
+
+  //temp = currentStatus.coolant * 10;
+  temp = currentStatus.coolant; //editRempage: Fix Coolant for RealDash
+  if (temp > 90){ temp += 4;}
+  else if (temp > 70){ temp += 3;}
+  else if (temp > 50){ temp += 2;}
+  else if (temp > 30){ temp += 1;}
+  temp=(temp+20) * 17;
   bytestosend -= primarySerial.write(temp>>8);
   bytestosend -= primarySerial.write(temp);
 
-  temp = currentStatus.TPS * 10;
+
+  temp = currentStatus.TPS * 5;//editRempage this is how to fix TPS in RealDash
   bytestosend -= primarySerial.write(temp>>8);
   bytestosend -= primarySerial.write(temp);
 
@@ -861,7 +878,7 @@ void sendValuesLegacy(void)
   bytestosend -= primarySerial.write(99); // cold_adv_deg
   bytestosend -= primarySerial.write(99); // cold_adv_deg
 
-  temp = currentStatus.tpsDOT;
+  temp = currentStatus.tpsDOT * 10; //editRempage, times 10 to fix Realdash
   bytestosend -= primarySerial.write(temp>>8); // TPSdot
   bytestosend -= primarySerial.write(temp); // TPSdot
 
@@ -880,12 +897,14 @@ void sendValuesLegacy(void)
   bytestosend -= primarySerial.write(99); // fuelcor
   bytestosend -= primarySerial.write(99); // portStatus
 
-  temp = currentStatus.advance1 * 10;
+  //temp = currentStatus.advance1 * 10;
+  temp = currentStatus.ethanolPct * 10; //editRempage, hack advance1 to get ethanol percentage. This is 'Knock Advance Retard' in Realdash
   bytestosend -= primarySerial.write(temp>>8);
   bytestosend -= primarySerial.write(temp);
   temp = currentStatus.advance2 * 10;
   bytestosend -= primarySerial.write(temp>>8);
   bytestosend -= primarySerial.write(temp);
+
 
   for(int i = 0; i < bytestosend; i++)
   {
